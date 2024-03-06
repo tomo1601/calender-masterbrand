@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import url('https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap');
+:root {
+  --custom-light-blue: #E4F6ED;
+  --custom-light-blue: #E4F6ED;
+  --custom-light-blue: #E4F6ED;
+  --custom-light-blue: #E4F6ED;
+  --custom-light-blue: #E4F6ED;
+}
+
+.bg-custom-blue-light {
+  background-color: var(--custom-light-blue);
+}
