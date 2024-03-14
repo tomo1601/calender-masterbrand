@@ -1,6 +1,5 @@
 import React from "react";
 import Day from "./Day";
-import DayOfWeek from "./DayOfWeek";
 
 const Month = ({ month }) => {
   return (

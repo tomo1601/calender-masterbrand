@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 
-const usedColors = ["indigo", "gray", "green", "blue", "red", "purple"];
+const usedColors = ["bg-indigo", "bg-gray", "bg-green", "bg-blue", "bg-red", "bg-purple", "text-indigo", "text-gray", "text-green", "text-blue", "text-red", "text-purple", "border-indigo", "border-gray", "border-green", "border-blue", "border-red", "border-purple"];
 module.exports = {
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
@@ -27,5 +27,5 @@ module.exports = {
   plugins: [],
   darkMode: "class",
   plugins: [require('@tailwindcss/forms'),],
-  safelist: usedColors.map((c) => `bg-${c}-500`),
+  safelist: usedColors.map((c) => `${c}-500`),
 };

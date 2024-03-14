@@ -2,31 +2,95 @@
 import { useContext, useState } from "react";
 import GlobalContext from "../context/GlobalContext";
 import { useListEvents } from "../context/EventStore";
+import SelectTimeForm from "./TimeOfDay";
+import { generateTimeOptions } from "../util";
 
 const labelsClass = ["indigo", "gray", "green", "blue", "red", "purple"];
 
 const EventModal = () => {
-  const { setShowEventModal, daySelected } = useContext(GlobalContext);
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [selectedColor, setSelectedColor] = useState("");
+  const { setShowEventModal, daySelected, eventSelected, setEventSelected } =
+    useContext(GlobalContext);
+  const [title, setTitle] = useState(eventSelected ? eventSelected.title : "");
+  const [description, setDescription] = useState(
+    eventSelected ? eventSelected.description : ""
+  );
+  const [email, setEmail] = useState(eventSelected ? eventSelected.email : "");
+  const [name, setName] = useState(eventSelected ? eventSelected.name : "");
+  const [address, setAddress] = useState(
+    eventSelected ? eventSelected.address : ""
+  );
+  const [selectedColor, setSelectedColor] = useState(
+    eventSelected
+      ? labelsClass.find((lbl) => lbl === eventSelected.label)
+      : labelsClass[0]
+  );
   const { listEvents, setListEvent } = useListEvents();
 
+  const timeOfDay = generateTimeOptions();
+  const [timeStartOptions, setTimeStartOptions] = useState(timeOfDay);
+  const [timeEndOptions, setTimeEndOptions] = useState(timeOfDay);
+  const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
+
+  // Function to handle time start change
+  const handleStartTimeChange = (e) => {
+    setStartTime(e.target.value);
+  };
+
+  // Function to handle time end change
+  const handleEndTimeChange = (e) => {
+    setEndTime(e.target.value);
+  };
+
   const pushEventCalendar = (newEvent) => {
-    localStorage.setItem("listEvents", JSON.stringify([...listEvents, newEvent]));
+    localStorage.setItem(
+      "listEvents",
+      JSON.stringify([...listEvents, newEvent])
+    );
     setListEvent([...listEvents, newEvent]);
+  };
+
+  const updateEventCalendar = (updateEvent) => {
+    localStorage.setItem(
+      "listEvents",
+      JSON.stringify(
+        listEvents.map((evt) => (evt.id === updateEvent.id ? updateEvent : evt))
+      )
+    );
+    setListEvent(
+      listEvents.map((evt) => (evt.id === updateEvent.id ? updateEvent : evt))
+    );
+  };
+
+  const deleteEventCalendar = (deleteEvent) => {
+    localStorage.setItem(
+      "listEvents",
+      JSON.stringify(listEvents.filter((evt) => evt.id !== deleteEvent.id))
+    );
+    setEventSelected(null);
+    setListEvent(listEvents.filter((evt) => evt.id !== deleteEvent.id));
   };
 
   const handleSubmitEvent = (e) => {
     e.preventDefault();
     const calendarEvent = {
       title,
+      email,
+      name,
+      address,
       description,
+      startTime: startTime,
+      endTime: endTime,
       label: selectedColor,
       day: daySelected.valueOf(),
-      id: Date.now(),
+      id: eventSelected ? eventSelected.id : Date.now(),
     };
-    pushEventCalendar(calendarEvent);
+    if (eventSelected) {
+      updateEventCalendar(calendarEvent);
+    } else {
+      pushEventCalendar(calendarEvent);
+    }
+    setEventSelected(null);
     setShowEventModal(false);
   };
 
@@ -37,14 +101,30 @@ const EventModal = () => {
           <span className="material-icons-outlined text-gray-400">
             drag_handle
           </span>
-          <button>
-            <span
-              className="material-icons-outlined text-gray-400"
-              onClick={() => setShowEventModal(false)}
-            >
-              close
-            </span>
-          </button>
+          <div className="">
+            {eventSelected && (
+              <span
+                className="material-icons-outlined text-gray-400 cursor-pointer"
+                onClick={() => {
+                  deleteEventCalendar(eventSelected);
+                  setShowEventModal(false);
+                }}
+              >
+                delete
+              </span>
+            )}
+            <button>
+              <span
+                className="material-icons-outlined text-gray-400"
+                onClick={() => {
+                  setEventSelected(null);
+                  setShowEventModal(false);
+                }}
+              >
+                close
+              </span>
+            </button>
+          </div>
         </header>
         <div className="p-3">
           <div className="grid grid-cols-10 items-end gap-y-7">
@@ -65,6 +145,42 @@ const EventModal = () => {
               {daySelected.format("dddd, DD MMMM YY")}
             </p>
             <span className="col-span-1 material-icons-outlined text-gray-400">
+              email
+            </span>
+            <input
+              type="text"
+              name="email"
+              placeholder="Add email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="col-span-9 pt-3 border-0 text-gray-600 pd-2 w-full border-b-2 border-gray-200 focus:outline-none focus:ring-0 focus:border-blue-500"
+            />
+            <span className="col-span-1 material-icons-outlined text-gray-400">
+              perm_identity
+            </span>
+            <input
+              type="text"
+              name="name"
+              placeholder="Add name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+              className="col-span-9 pt-3 border-0 text-gray-600 pd-2 w-full border-b-2 border-gray-200 focus:outline-none focus:ring-0 focus:border-blue-500"
+            />
+            <span className="col-span-1 material-icons-outlined text-gray-400">
+              place
+            </span>
+            <input
+              type="text"
+              name="address"
+              placeholder="Add address"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              required
+              className="col-span-9 pt-3 border-0 text-gray-600 pd-2 w-full border-b-2 border-gray-200 focus:outline-none focus:ring-0 focus:border-blue-500"
+            />
+            <span className="col-span-1 material-icons-outlined text-gray-400">
               segment
             </span>
             <input
@@ -76,6 +192,33 @@ const EventModal = () => {
               required
               className="col-span-9 pt-3 border-0 text-gray-600 pd-2 w-full border-b-2 border-gray-200 focus:outline-none focus:ring-0 focus:border-blue-500"
             />
+            <div className="grid grid-cols-6 col-span-10">
+              <label className="col-span-1 flex items-center justify-left">
+                From:
+              </label>
+              <select
+                name="starttime"
+                value={startTime}
+                onChange={handleStartTimeChange}
+                className="col-span-2"
+              >
+                <option value="">00:00</option>
+                {generateTimeOptions()}
+              </select>
+
+              <label className="col-span-1 flex items-center justify-center">
+                To:
+              </label>
+              <select
+                name="endtime"
+                value={endTime}
+                onChange={handleEndTimeChange}
+                className="col-span-2"
+              >
+                <option value="">00:00</option>
+                {generateTimeOptions()}
+              </select>
+            </div>
             <span className="col-span-1 material-icons-outlined text-gray-400">
               bookmark_border
             </span>

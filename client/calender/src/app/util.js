@@ -23,3 +23,26 @@ export const getCurrentDayClass = (day, daySelected) => {
     ? "bg-blue-100 rounded-full text-blue-600 font-bold"
     : "";
 };
+
+// Function to generate time options
+export const generateTimeOptions = () => {
+    const options = [];
+    let hour = 8;
+    let minute = 0;
+    let period = 'AM';
+
+    while (!(hour === 22 && minute === 15 && period === 'PM')) {
+      const time = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')} ${period}`;
+      options.push(<option key={time} value={time}>{time}</option>);
+      minute += 15;
+      if (minute === 60) {
+        minute = 0;
+        hour++;
+      }
+      if (hour === 12 && minute === 0 && period === 'AM') {
+        period = 'PM';
+      }
+    }
+
+    return options;
+  };

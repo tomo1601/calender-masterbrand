@@ -1,32 +1,58 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import GlobalContext from "./GlobalContext";
 import dayjs from "dayjs";
 import { useListEvents } from "./EventStore";
-
-
 
 const ContextWrapper = (props) => {
   const [monthIndex, setMonthIndex] = useState(dayjs().month());
   const [smallCalendarMonthIndex, setSmallCalendarMonthIndex] = useState(null);
   const [daySelected, setDaySelected] = useState(dayjs());
+  const [eventSelected, setEventSelected] = useState(dayjs());
+  const [labels, setLabels] = useState([]);
   const [showEventModal, setShowEventModal] = useState(null);
   useEffect(() => {
     smallCalendarMonthIndex && setMonthIndex(smallCalendarMonthIndex);
   }, [smallCalendarMonthIndex]);
 
-  const {setListEvent} = useListEvents()
+  const { listEvents, setListEvent } = useListEvents();
 
   const initEvents = () => {
     const storageEvents = localStorage.getItem("listEvents");
     const parseEvents = storageEvents ? JSON.parse(storageEvents) : [];
     return parseEvents;
   };
-  useEffect(()=>{
-    if (typeof window !== 'undefined') {
-      setListEvent(initEvents())
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setListEvent(initEvents());
     }
-  },[])
+  }, []);
+
+  useEffect(() => {
+    setLabels((prevLabels) => {
+      return [...new Set(listEvents.map((evt) => evt.label))].map((label) => {
+        const currentLabel = prevLabels.find((lbl) => (lbl.label = label));
+        return {
+          label,
+          checked: currentLabel ? currentLabel.checked : true,
+        };
+      });
+    });
+  }, [listEvents]);
+
+  const updateLabel = (label) => {
+    setLabels(labels.map((lbl) => (lbl.label === label.label ? label : lbl)));
+  };
+
+  const filteredEvent = useMemo(() => {
+    return listEvents.filter((evt) =>
+      labels
+        .filter((lbl) => lbl.checked)
+        .map((lbl => lbl.label))
+        .includes(evt.label)
+    );
+  }, [listEvents, labels]);
+
   return (
     <GlobalContext.Provider
       value={{
@@ -38,6 +64,12 @@ const ContextWrapper = (props) => {
         setDaySelected,
         showEventModal,
         setShowEventModal,
+        eventSelected,
+        setEventSelected,
+        labels,
+        setLabels,
+        updateLabel,
+        filteredEvent,
       }}
     >
       {props.children}
