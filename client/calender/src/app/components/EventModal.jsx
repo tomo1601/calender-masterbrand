@@ -2,8 +2,8 @@
 import { useContext, useState } from "react";
 import GlobalContext from "../context/GlobalContext";
 import { useListEvents } from "../context/EventStore";
-import SelectTimeForm from "./TimeOfDay";
 import { generateTimeOptions } from "../util";
+import { createEvent } from "../context/DataContext";
 
 const labelsClass = ["indigo", "gray", "green", "blue", "red", "purple"];
 
@@ -89,6 +89,7 @@ const EventModal = () => {
       updateEventCalendar(calendarEvent);
     } else {
       pushEventCalendar(calendarEvent);
+      createEvent(calendarEvent)
     }
     setEventSelected(null);
     setShowEventModal(false);

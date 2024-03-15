@@ -6,7 +6,7 @@ const EventSchema = new Schema(
     title: {
         type: String,
         required: true,
-        minlength: [10, 'Title must be three characters long!']
+        minlength: [3, 'Title must be three characters long!']
     },
     email: {
         type: String,
@@ -32,12 +32,12 @@ const EventSchema = new Schema(
         default: ''
     },
     startTime: {
-        type: Date,
-        default: Date.now
+        type: String,
+        default: ""
     },
     endTime: {
-        type: Date,
-        default: Date.now
+        type: String,
+        default: ""
     },
     label:{
         type: String,

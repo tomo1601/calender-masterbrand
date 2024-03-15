@@ -16,9 +16,9 @@ const FullCalendar = () => {
   return (
     <React.Fragment>
       {showEventModal&&<EventModal/>}
-          <div className="h-screen max-w-screen-xl mx-auto flex mt-4 mb-2">
+          <div className="max-w-screen-xl mx-auto flex mt-4 mb-2">
             <Sidebar />
-            <div className="flex flex-col w-full mx-4 bg-white">
+            <div className="h-screen flex flex-col w-full mx-4 bg-white">
               <CalendarHeader />
               <div className="flex flex-1">
                 <Month month={currentMonth} />
