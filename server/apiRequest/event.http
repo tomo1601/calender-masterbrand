@@ -1,0 +1,36 @@
+POST http://localhost:5000/api/event/new
+Content-Type: application/json
+
+{
+    "address": "338/16 đường Lê Thị riêng, phường thới An, quận 12",
+    "day": 1709571600000,
+    "description": "",
+    "email": "quangssoss@gmail.com",
+    "id": 1709976045506,
+    "label": "green",
+    "name": "Quang Tran",
+    "title": "Activity1 "
+}
+###
+GET  http://localhost:5000/api/event
+
+###
+GET  http://localhost:5000/api/event/1709976045506
+
+###
+PUT  http://localhost:5000/api/event/update/65f40d101fc63e6294af7fce
+Content-Type: application/json
+
+{
+    "address": "338/16 đường Lê Thị riêng",
+    "day": 1709571600000,
+    "description": "",
+    "email": "quangssoss@gmail.com",
+    "id": 1709976045506,
+    "label": "green",
+    "name": "Quang Tran",
+    "title": "Activity1 "
+}
+
+###
+DELETE   http://localhost:5000/api/event/delete/65f4061c2862b88536b55d67
