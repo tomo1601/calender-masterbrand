@@ -1,20 +1,20 @@
-import axios from "axios";
-
 export const getAllEvent = async () => {
-  const res = await axios.get(
-    `https://calendar-be-example-441cc47b8eda.herokuapp.com/api/event`
+  const res = await fetch(
+    `https://calendar-be-example-441cc47b8eda.herokuapp.com/api/event`,{ next: { revalidate: 600 } }
   );
-  if (res.data.success) {
-    return res.data.events;
+  const data = await res.json();
+  if (data.success) {
+    return data.events;
   } else throw new Error("Failed to fetch data");
 };
 
 export const getEventById = async (id) => {
-  const res = await axios.get(
-    `https://calendar-be-example-441cc47b8eda.herokuapp.com/api/event/${id}`
+  const res = await fetch(
+    `https://calendar-be-example-441cc47b8eda.herokuapp.com/api/event/${id}`,{ next: { revalidate: 600 } }
   );
-  if (res.data.success) {
-    return res.data.events;
+  const data = await res.json();
+  if (data.success) {
+    return data.events;
   } else throw new Error("Failed to fetch data");
 };
 
