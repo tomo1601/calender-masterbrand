@@ -24,10 +24,10 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body className={`${inter.className} bg-custom-blue-light`}>
-        <Providers>
-          {/* <ThemeSwitcher/> */}
-          {children}
-        </Providers>
+          <Providers>
+            {/* <ThemeSwitcher/> */}
+            {children}
+          </Providers>
       </body>
     </html>
   );

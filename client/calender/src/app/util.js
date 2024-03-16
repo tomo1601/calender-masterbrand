@@ -30,11 +30,13 @@ export const generateTimeOptions = () => {
     let hour = 8;
     let minute = 0;
     let period = 'AM';
+    let index = 0
 
     while (!(hour === 22 && minute === 15 && period === 'PM')) {
       const time = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')} ${period}`;
-      options.push(<option key={time} value={time}>{time}</option>);
+      options.push(<option key={time} value={time} id={index}>{time}</option>);
       minute += 15;
+      index += 1
       if (minute === 60) {
         minute = 0;
         hour++;

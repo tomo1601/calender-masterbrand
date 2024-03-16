@@ -3,6 +3,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import GlobalContext from "./GlobalContext";
 import dayjs from "dayjs";
 import { useListEvents } from "./EventStore";
+import { useEvent } from "../hooks/useEvent";
 
 const ContextWrapper = (props) => {
   const [monthIndex, setMonthIndex] = useState(dayjs().month());
@@ -16,17 +17,14 @@ const ContextWrapper = (props) => {
   }, [smallCalendarMonthIndex]);
 
   const { listEvents, setListEvent } = useListEvents();
-
-  const initEvents = () => {
-    const storageEvents = localStorage.getItem("listEvents");
-    const parseEvents = storageEvents ? JSON.parse(storageEvents) : [];
-    return parseEvents;
-  };
+  const {GetEvent} = useEvent()
+  const {data} = GetEvent()
+  
   useEffect(() => {
     if (typeof window !== "undefined") {
-      setListEvent(initEvents());
+      data&&setListEvent(data);
     }
-  }, []);
+  }, [data]);
 
   useEffect(() => {
     setLabels((prevLabels) => {

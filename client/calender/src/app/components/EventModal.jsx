@@ -3,7 +3,7 @@ import { useContext, useState } from "react";
 import GlobalContext from "../context/GlobalContext";
 import { useListEvents } from "../context/EventStore";
 import { generateTimeOptions } from "../util";
-import { createEvent } from "../context/DataContext";
+import { createEvent, deleteEventById, updateEventById } from "../context/eventContext";
 
 const labelsClass = ["indigo", "gray", "green", "blue", "red", "purple"];
 
@@ -29,46 +29,47 @@ const EventModal = () => {
   const timeOfDay = generateTimeOptions();
   const [timeStartOptions, setTimeStartOptions] = useState(timeOfDay);
   const [timeEndOptions, setTimeEndOptions] = useState(timeOfDay);
-  const [startTime, setStartTime] = useState("");
-  const [endTime, setEndTime] = useState("");
+  const [startTime, setStartTime] = useState("08:00 AM");
+  const [endTime, setEndTime] = useState("08:00 AM");
 
   // Function to handle time start change
   const handleStartTimeChange = (e) => {
-    setStartTime(e.target.value);
+    const { value } = e.target;
+    setStartTime(value);
+    const index = timeOfDay.findIndex(
+      (item) => item.props.value === value
+    );
+    const newOptions = timeOfDay.slice(index + 1);
+    setTimeEndOptions(newOptions);
   };
 
   // Function to handle time end change
   const handleEndTimeChange = (e) => {
-    setEndTime(e.target.value);
+    const { value } = e.target;
+    setEndTime(value);
+    const index = timeOfDay.findIndex(
+      (item) => item.props.value === value
+    );
+    const newOptions = timeOfDay.slice(0,index);
+    setTimeStartOptions(newOptions);
   };
 
   const pushEventCalendar = (newEvent) => {
-    localStorage.setItem(
-      "listEvents",
-      JSON.stringify([...listEvents, newEvent])
-    );
     setListEvent([...listEvents, newEvent]);
+    createEvent(newEvent)
   };
 
   const updateEventCalendar = (updateEvent) => {
-    localStorage.setItem(
-      "listEvents",
-      JSON.stringify(
-        listEvents.map((evt) => (evt.id === updateEvent.id ? updateEvent : evt))
-      )
-    );
     setListEvent(
       listEvents.map((evt) => (evt.id === updateEvent.id ? updateEvent : evt))
     );
+    updateEventById(updateEvent)
   };
 
   const deleteEventCalendar = (deleteEvent) => {
-    localStorage.setItem(
-      "listEvents",
-      JSON.stringify(listEvents.filter((evt) => evt.id !== deleteEvent.id))
-    );
     setEventSelected(null);
     setListEvent(listEvents.filter((evt) => evt.id !== deleteEvent.id));
+    deleteEventById(deleteEvent)
   };
 
   const handleSubmitEvent = (e) => {
@@ -89,7 +90,6 @@ const EventModal = () => {
       updateEventCalendar(calendarEvent);
     } else {
       pushEventCalendar(calendarEvent);
-      createEvent(calendarEvent)
     }
     setEventSelected(null);
     setShowEventModal(false);
@@ -203,8 +203,7 @@ const EventModal = () => {
                 onChange={handleStartTimeChange}
                 className="col-span-2"
               >
-                <option value="">00:00</option>
-                {generateTimeOptions()}
+                {timeStartOptions}
               </select>
 
               <label className="col-span-1 flex items-center justify-center">
@@ -216,8 +215,7 @@ const EventModal = () => {
                 onChange={handleEndTimeChange}
                 className="col-span-2"
               >
-                <option value="">00:00</option>
-                {generateTimeOptions()}
+                {timeEndOptions}
               </select>
             </div>
             <span className="col-span-1 material-icons-outlined text-gray-400">

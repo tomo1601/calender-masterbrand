@@ -24,7 +24,7 @@ const SmallCalendaer = () => {
 
   return (
     <div className="mt-5">
-      <header className="flex justify-between">
+      <header className="flex gap-1 justify-center md:justify-between">
         <button onClick={() => handleOnClickToPrevMonth()}>
           <span className="material-icons-outlined cursor-pointer text-grey-600 mx-2">
             chevron_left
